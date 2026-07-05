@@ -1,6 +1,6 @@
-# Research Master Project
+# Research Master 9.0 Portfolio Optimizer
 
-USDJPY 5分足CSVを使い、固定戦略の全期間検証とOOS固定検証を行うプロジェクト版です。
+USDJPY 5分足CSVを使って、固定ルール検証、OOS固定検証、ポートフォリオ探索、ポートフォリオ最適化まで実行します。
 
 ## 実行
 
@@ -9,23 +9,34 @@ cd C:\FX\fx_tool\ResearchMaster
 python main.py
 ```
 
-## 出力先
+## 入力CSV
+
+既定では次を探します。
+
+```text
+C:\FX\fx_tool\data\USDJPY_5min_2021-2026.csv
+```
+
+## 主な出力
 
 ```text
 C:\FX\fx_tool\data\research_master_project
 ```
 
-## 主な出力
+- summary.csv
+- oos_validation.csv
+- portfolio_ranking.csv
+- selected_strategies.csv
+- portfolio_summary.csv
+- optimizer_summary.csv
+- optimizer_weights.csv
+- strategy_correlations.csv
+- optimizer_best_trades.csv
+- report.html
 
-- summary.csv 全期間検証
-- oos_validation.csv 2021-2024 / 2025以降の固定検証
-- oos_monthly.csv OOSの月別成績
-- report.html レポート
-- report.txt テキストレポート
-
-## Git保存
+## 保存
 
 ```powershell
 git add .
-git commit -m "add OOS validation"
+git commit -m "add Research Master 9.0 portfolio optimizer"
 ```
