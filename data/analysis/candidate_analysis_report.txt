@@ -1,7 +1,7 @@
 ﻿============================================================
 岡畠AI研究所 採用候補分析レポート
 ============================================================
-読み込み元: C:\FX\fx_tool\data\research_v04\adopted_candidates.csv
+読み込み元: C:\FX\fx_tool\data\research_v06\adopted_candidates.csv
 候補数: 75件
 
 判定内訳:

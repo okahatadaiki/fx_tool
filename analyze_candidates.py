@@ -6,7 +6,7 @@
 #   python analyze_candidates.py
 #
 # 読み込み候補:
-#   data/research_v04/adopted_candidates.csv
+#   data/research_v06/adopted_candidates.csv
 #   data/research/adopted_research_candidates.csv
 #   data/backtest/adopted_candidates.csv
 #
@@ -27,8 +27,8 @@ BASE_DIR = Path(__file__).resolve().parent
 OUTPUT_DIR = BASE_DIR / "data" / "analysis"
 
 CANDIDATE_PATHS = [
-    BASE_DIR / "data" / "research_v04" / "adopted_candidates.csv",
-    BASE_DIR / "data" / "research_v04" / "adopted_research_candidates.csv",
+    BASE_DIR / "data" / "research_v06" / "adopted_candidates.csv",
+    BASE_DIR / "data" / "research_v06" / "adopted_research_candidates.csv",
     BASE_DIR / "data" / "research" / "adopted_research_candidates.csv",
     BASE_DIR / "data" / "backtest" / "adopted_candidates.csv",
 ]
@@ -40,7 +40,7 @@ def find_candidate_file() -> Path:
             return path
     searched = "\n".join(str(p) for p in CANDIDATE_PATHS)
     raise FileNotFoundError(
-        "採用候補CSVが見つかりません。先に research_v04.py を実行してください。\n"
+        "採用候補CSVが見つかりません。先に research_v06.py を実行してください。\n"
         f"探した場所:\n{searched}"
     )
 
