@@ -1,6 +1,6 @@
-# Research Master 9.0 Portfolio Optimizer
+# Research Master 13.0 EA Factory
 
-USDJPY 5分足CSVを使って、固定ルール検証、OOS固定検証、ポートフォリオ探索、ポートフォリオ最適化まで実行します。
+12.0で合格した本命候補を、MT5デモ口座で検証するためのEAファイルとして出力します。
 
 ## 実行
 
@@ -9,34 +9,15 @@ cd C:\FX\fx_tool\ResearchMaster
 python main.py
 ```
 
-## 入力CSV
+## 出力
 
-既定では次を探します。
+`C:\FX\fx_tool\data\research_master_project\ea_factory` に以下を出力します。
 
-```text
-C:\FX\fx_tool\data\USDJPY_5min_2021-2026.csv
-```
+- `ResearchMaster_USDJPY_LowBreak48_MAUP.mq5`
+- `ea_settings.json`
+- `demo_checklist.txt`
+- `strategy_signal_reference.py`
 
-## 主な出力
+## 注意
 
-```text
-C:\FX\fx_tool\data\research_master_project
-```
-
-- summary.csv
-- oos_validation.csv
-- portfolio_ranking.csv
-- selected_strategies.csv
-- portfolio_summary.csv
-- optimizer_summary.csv
-- optimizer_weights.csv
-- strategy_correlations.csv
-- optimizer_best_trades.csv
-- report.html
-
-## 保存
-
-```powershell
-git add .
-git commit -m "add Research Master 9.0 portfolio optimizer"
-```
+最初は必ずデモ口座、0.01ロットのみ。利益保証ではありません。

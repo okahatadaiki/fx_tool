@@ -1,3 +1,4 @@
+
 import pandas as pd
 
 from config import DEFAULT_CSV, OUTPUT_DIR, SPREADS
@@ -7,11 +8,15 @@ from research_master.metrics import summarize_trades
 from research_master.oos import run_oos_validation, monthly_breakdown
 from research_master.portfolio import run_portfolio_engine
 from research_master.optimizer import run_portfolio_optimizer
+from research_master.lab import run_portfolio_lab
+from research_master.improvement import run_improvement_engine
+from research_master.validation import run_validation_engine
+from research_master.ea_factory import run_ea_factory
 from research_master.report import save_reports
 
 
 def main():
-    print("Research Master 9.0 Portfolio Optimizer 開始")
+    print("Research Master 13.0 EA Factory 開始")
     csv_path = DEFAULT_CSV
     if not csv_path.exists():
         raise FileNotFoundError(f"CSVが見つかりません: {csv_path}")
@@ -51,6 +56,58 @@ def main():
     if len(best_weights):
         print(best_weights[["strategy", "weight"]].to_string(index=False))
 
+    print("\n10.0 Portfolio Lab")
+    lab_results = run_portfolio_lab(df, selected_df, portfolio_trades_map, optimizer_best_trades, optimizer_summary)
+    if len(lab_results.get("decision", pd.DataFrame())):
+        print("最終判定:", lab_results["decision"].iloc[0, 0])
+    if len(lab_results.get("monte_carlo_summary", pd.DataFrame())):
+        print("\nMonte Carlo Summary")
+        print(lab_results["monte_carlo_summary"].to_string(index=False))
+    if len(lab_results.get("rolling_summary", pd.DataFrame())):
+        print("\nRolling Walk Forward Summary")
+        print(lab_results["rolling_summary"].to_string(index=False))
+    if len(lab_results.get("position_sizing", pd.DataFrame())):
+        print("\nPosition Sizing")
+        print(lab_results["position_sizing"][["position_method", "lot_multiplier", "pf", "expectancy_pips", "max_dd_pips", "ending_balance"]].to_string(index=False))
+
+    print("\n11.0 AI Improvement Engine")
+    improvement_results = run_improvement_engine(df, spread=0.5, stress_spread=1.0, top_limit=20)
+    imp_decision = improvement_results.get("improvement_decision", pd.DataFrame())
+    imp_rank = improvement_results.get("improvement_ranking", pd.DataFrame())
+    if len(imp_decision):
+        print("改善判定:", imp_decision.iloc[0]["decision"])
+        print("最上位:", imp_decision.iloc[0].get("top_strategy", ""))
+    if len(imp_rank):
+        cols = ["rank", "strategy", "trades", "pf", "expectancy_pips", "oos_pf", "oos_expectancy", "stress_pf_1_0", "rwf_pass_rate_pct", "improvement_score"]
+        print("\n改善候補ランキング")
+        print(imp_rank[cols].head(10).to_string(index=False))
+
+    print("\n12.0 Validation Engine")
+    validation_results = run_validation_engine(df, improvement_results, spread=0.5)
+    val_decision = validation_results.get("validation_decision", pd.DataFrame())
+    if len(val_decision):
+        print("最終検証判定:", val_decision.iloc[0].get("decision", ""))
+        print(val_decision.to_string(index=False))
+    cost_stress = validation_results.get("validation_cost_stress", pd.DataFrame())
+    if len(cost_stress):
+        print("\nコスト耐性 上位抜粋")
+        print(cost_stress[(cost_stress["slippage"].isin([0.0,0.5])) & (cost_stress["spread"].isin([0.5,1.0,1.5,2.0]))].to_string(index=False))
+    delay_stress = validation_results.get("validation_delay_stress", pd.DataFrame())
+    if len(delay_stress):
+        print("\n遅延耐性")
+        print(delay_stress.to_string(index=False))
+    year_detail = validation_results.get("validation_year_detail", pd.DataFrame())
+    if len(year_detail):
+        print("\n年別検証")
+        print(year_detail.to_string(index=False))
+
+
+    print("\n13.0 EA Factory")
+    ea_results = run_ea_factory(OUTPUT_DIR, validation_results)
+    print("MT5 EAを作成しました:", ea_results["mq5_path"])
+    print("出力フォルダ:", ea_results["ea_dir"])
+    print("次はMT5のデモ口座で0.01ロット検証です。")
+
     save_reports(
         result_df,
         all_trades,
@@ -66,10 +123,13 @@ def main():
         optimizer_weights=optimizer_weights,
         optimizer_corr=optimizer_corr,
         optimizer_best_trades=optimizer_best_trades,
+        lab_results=lab_results,
+        improvement_results=improvement_results,
+        validation_results=validation_results,
     )
     print("\n完了")
     print(f"出力先: {OUTPUT_DIR}")
-    print("見るファイル: optimizer_summary.csv / optimizer_weights.csv / strategy_correlations.csv / report.html")
+    print("見るファイル: report.html / portfolio_lab / improvement / validation / ea_factory フォルダ")
 
 
 if __name__ == "__main__":
